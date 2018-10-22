@@ -1,8 +1,8 @@
-import Ember from 'ember';
+import { A as emberArray } from '@ember/array';
+import { isBlank } from '@ember/utils';
 import Pretender from 'pretender';
 import faker from 'faker';
 
-const { A: emberArray, isBlank } = Ember;
 const apiUrl = '/api/v1';
 const { stringify } = JSON;
 const ETERNALLY_PRESENT_USER = {

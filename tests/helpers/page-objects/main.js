@@ -1,3 +1,4 @@
+import { click, fillIn, find } from '@ember/test-helpers';
 import PageObject from './base';
 
 export default class MainPO extends PageObject {
@@ -5,35 +6,29 @@ export default class MainPO extends PageObject {
     super(...arguments);
   }
 
-  searchForUserByName(id, value) {
-    return this.then(() => {
-      const input = findWithAssert(`#${id} input`);
-      fillIn(input, value).then(() => input.focusout());
-    });
+  async searchForUserByName(id, value) {
+    const input = find(`#${id} input`);
+    await fillIn(input, value);
+    input.blur();
   }
 
-  selectFirstResult() {
-    return this.then(() => {
-      click('.hypersearch-result:first-of-type span');
-    });
+  async selectFirstResult() {
+    await click('.hypersearch-result:first-of-type span');
   }
 
   assertResultLength(id, expectedLength) {
-    return this.then(() => {
-      this.assert.ok(find(`#${id} .hypersearch-results li`).length >= expectedLength, `it displays ${expectedLength} results`);
-    });
+    this.assert.ok(
+      find(`#${id} .hypersearch-results li`).children.length >= expectedLength,
+      `it displays ${expectedLength} results`
+    );
   }
 
   assertClosureActionResultsLength(expectedLength) {
-    return this.then(() => {
-      this.assert.ok(find(`.inline-results-length:contains("${expectedLength}")`), `it displays ${expectedLength} results from the closure action`);
-    });
+    this.assert.ok(find(`.inline-results-length:contains("${expectedLength}")`), `it displays ${expectedLength} results from the closure action`);
   }
 
   assertEmployeeOfTheDay() {
-    return this.then(() => {
-      this.assert.ok(findWithAssert('#eotd'), 'it displays the selected result');
-      this.assert.ok(findWithAssert('marquee'), 'it displays the selected result');
-    });
+    this.assert.ok(find('#eotd'), 'it displays the selected result');
+    this.assert.ok(find('marquee'), 'it displays the selected result');
   }
 }

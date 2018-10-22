@@ -1,3 +1,5 @@
+import { click, fillIn, visit, currentURL, find } from '@ember/test-helpers';
+
 export default class PageObject {
   constructor(assert, options) {
     this.assert = assert;
@@ -6,58 +8,32 @@ export default class PageObject {
 
   // finders
   findInputByName(name) {
-    return findWithAssert(`input[name="${name}"]`);
+    return find(`input[name="${name}"]`);
   }
 
   findInputsWithErrors(errorSelector = '.has-error') {
-    return findWithAssert(`input${errorSelector}`);
+    return find(`input${errorSelector}`);
   }
 
   // assertions
   assertCurrentUrl(targetUrl = `/${this.options.routeName}`) {
-    return this.then(() => {
-      const currentUrl = currentURL();
+    const currentUrl = currentURL();
 
-      this.assert.equal(currentUrl, targetUrl, 'it redirects to the correct url');
-    });
+    this.assert.equal(currentUrl, targetUrl, 'it redirects to the correct url');
   }
 
-  assertVisitUrl(targetUrl = `/${this.options.routeName}`) {
-    visit(targetUrl);
+  async assertVisitUrl(targetUrl = `/${this.options.routeName}`) {
+    await visit(targetUrl);
 
-    return this.assertCurrentUrl(targetUrl);
+    return await this.assertCurrentUrl(targetUrl);
   }
 
   // interactions
-  fillInByName(name, value) {
-    return this.then(() => {
-      const input = this.findInputByName(name);
+  async fillInByName(name, value) {
+    const input = this.findInputByName(name);
 
-      fillIn(input, value)
-        .then(() => input.focusout());
-    });
-  }
-
-  // utils
-  /**
-   * Pauses a test so you can look around within a PageObject chain.
-   *
-   * ```js
-   *  test('foo', function(assert) {
-   *    new SomePage(assert)
-   *      .login()
-   *      .embiggen()
-   *      .pause()
-   *      .doStuff();
-   *  });
-   * ```
-   * @public
-   * @method pause
-   * @param {Void}
-   * @return {this}
-   */
-  pause() {
-    return this.then(() => window.pauseTest());
+    await fillIn(input, value);
+    input.blur();
   }
 
   /**
@@ -69,7 +45,7 @@ export default class PageObject {
    * @return {this}
    */
   embiggen(testContainerId = 'ember-testing-container') {
-    return this.then(() => $(`#${testContainerId}`).css({ width: '100vw', height: '100vh' }));
+    $(`#${testContainerId}`).css({ width: '100vw', height: '100vh' })
   }
 
   /**
@@ -94,14 +70,9 @@ export default class PageObject {
     const poInstance = this; // deopt Babel so `this` is accessible
     return this.then((applicationInstance) => {
       console.info('Access the PageObject with `poInstance`, and the application instance with `applicationInstance`.');
-      debugger;
+
       eval();
     });
     // jshint ignore:end
-  }
-
-  then(callback) {
-    andThen(callback);
-    return this;
   }
 }

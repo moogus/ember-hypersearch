@@ -1,18 +1,12 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { A as emberArray } from '@ember/array';
+import { reject, resolve, Promise } from 'rsvp';
+import { bind, debounce } from '@ember/runloop';
+import { set, get } from '@ember/object';
+import { typeOf, isPresent, isBlank } from '@ember/utils';
+import { inject } from '@ember/service';
 import layout from '../templates/components/hyper-search';
-
-const {
-  Component,
-  A: emberArray,
-  RSVP: { Promise, resolve, reject },
-  $: { ajax },
-  run: { debounce, bind },
-  get,
-  set,
-  isBlank,
-  isPresent,
-  typeOf
-} = Ember;
+/* eslint-disable */
 
 /**
  * Returns the key for the query in the cache. Only works in conjunction with
@@ -47,6 +41,7 @@ export default Component.extend({
   endpoint: null,
   resultKey: null,
   placeholder: null,
+  ajax: inject(),
 
   init() {
     this._super(...arguments);
@@ -111,10 +106,10 @@ export default Component.extend({
    */
   request(query) {
     return new Promise((resolve, reject) => {
-      ajax({
+      const ajax = this.get('ajax');
+      ajax.request(get(this, 'endpoint'), {
         dataType: 'json',
         method: 'GET',
-        url: get(this, 'endpoint'),
         data: { q: query }
       })
       .then(resolve, reject);

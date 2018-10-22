@@ -1,20 +1,22 @@
----
 language: node_js
 node_js:
-  - "4.1.2"
+  - 'lts/Carbon'
 
-sudo: required
+sudo: false
 dist: trusty
 
 cache:
   directories:
-    - node_modules
+  - "$HOME/.npm"
+  - "$HOME/.cache"
 
 env:
   - EMBER_TRY_SCENARIO=default
   - EMBER_TRY_SCENARIO=ember-1.13
   - EMBER_TRY_SCENARIO=ember-2.0
   - EMBER_TRY_SCENARIO=ember-2.1
+  - EMBER_TRY_SCENARIO=ember-3.0
+  - EMBER_TRY_SCENARIO=ember-3.5
   - EMBER_TRY_SCENARIO=ember-release
   - EMBER_TRY_SCENARIO=ember-beta
   - EMBER_TRY_SCENARIO=ember-canary
@@ -27,12 +29,6 @@ matrix:
 before_install:
   - export PATH=/usr/local/phantomjs-2.0.0/bin:$PATH
   - "npm config set spin false"
-  - "npm install -g npm@^3"
-
-install:
-  - npm install -g bower
-  - npm install
-  - bower install
 
 script:
   - ember try $EMBER_TRY_SCENARIO test
