@@ -17,37 +17,38 @@ module('Acceptance | main', function(hooks) {
   test('it renders results', async function(assert) {
     const page = new MainPO(assert, { routeName: '/' });
     await page.assertVisitUrl();
-    this.pauseTest()
     await page.searchForUserByName('component-block', 'a');
     await page.assertResultLength('component-block', 1);
   });
 
-/*  test('it handles selecting results', function(assert) {
-    return new MainPO(assert, { routeName: '/' })
-      .assertVisitUrl()
-      .searchForUserByName('component-block', 'a')
-      .selectFirstResult()
-      .assertEmployeeOfTheDay();
+  test('it handles selecting results', async function(assert) {
+    const page = new MainPO(assert, { routeName: '/' });
+    await page.assertVisitUrl();
+    await page.searchForUserByName('component-block', 'a');
+    await page.selectFirstResult();
+    await page.assertEmployeeOfTheDay();
   });
 
-  test('it does not search if the query is shorter than the `minQueryLength`', function(assert) {
-    return new MainPO(assert, { routeName: '/' })
-      .assertVisitUrl()
-      .searchForUserByName('component-inline', 'a')
-      .assertResultLength('component-inline', 0);
+  test(
+    'it does not search if the query is shorter than the `minQueryLength`',
+    async function(assert) {
+    const page = new MainPO(assert, { routeName: '/' });
+    await page.assertVisitUrl();
+    await page.searchForUserByName('component-inline', 'a');
+    await page.assertResultLength('component-inline', 0);
   });
 
-  test('it accepts a `resultKey`', function(assert) {
-    return new MainPO(assert, { routeName: '/' })
-      .assertVisitUrl()
-      .searchForUserByName('component-inline', 'Miss Adan Gorczany')
-      .assertResultLength('component-inline', 1);
+  test('it accepts a `resultKey`', async function(assert) {
+    const page = new MainPO(assert, { routeName: '/' });
+    await page.assertVisitUrl();
+    await page.searchForUserByName('component-inline', 'Miss Adan Gorczany');
+    await page.assertResultLength('component-inline', 1);
   });
 
-  test('it handles results', function(assert) {
-    return new MainPO(assert, { routeName: '/' })
-      .assertVisitUrl()
-      .searchForUserByName('component-inline', 'Miss Adan Gorczany')
-      .assertClosureActionResultsLength('component-inline', 1);
-  });*/
+  test('it handles results', async function(assert) {
+    const page = new MainPO(assert, { routeName: '/' });
+    await page.assertVisitUrl();
+    await page.searchForUserByName('component-inline', 'Miss Adan Gorczany');
+    await page.assertClosureActionResultsLength('component-inline', 1);
+  });
 });

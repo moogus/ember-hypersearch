@@ -18,13 +18,16 @@ export default class MainPO extends PageObject {
 
   assertResultLength(id, expectedLength) {
     this.assert.ok(
-      find(`#${id} .hypersearch-results li`).children.length >= expectedLength,
+      find(`#${id} .hypersearch-results ${expectedLength > 0 ? 'li' : '' }`).children.length >= expectedLength,
       `it displays ${expectedLength} results`
     );
   }
 
-  assertClosureActionResultsLength(expectedLength) {
-    this.assert.ok(find(`.inline-results-length:contains("${expectedLength}")`), `it displays ${expectedLength} results from the closure action`);
+  assertClosureActionResultsLength(id, expectedLength) {
+    this.assert.equal(
+      find('.inline-results-length').innerText, expectedLength,
+      `it displays ${expectedLength} results from the closure action`
+    );
   }
 
   assertEmployeeOfTheDay() {
