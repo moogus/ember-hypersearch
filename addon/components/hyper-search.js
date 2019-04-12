@@ -85,8 +85,8 @@ export default Component.extend({
     if (isBlank(query) || (query.length < get(this, 'minQueryLength'))) {
       return reject();
     }
-
     let cachedValue = this.getCacheForQuery(query);
+    console.log('FETCH ' + query + ' CACHE=' + cachedValue);
 
     this._handleAction('loadingHandler', true);
 
