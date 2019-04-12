@@ -86,8 +86,6 @@ export default Component.extend({
       return reject();
     }
     let cachedValue = this.getCacheForQuery(query);
-    console.log('FETCH ' + query + ' CACHE=' + cachedValue);
-
     this._handleAction('loadingHandler', true);
 
     if (isPresent(cachedValue)) {
@@ -155,7 +153,7 @@ export default Component.extend({
   actions: {
     search(_event, query) {
       if(get(this, 'idleEnabled')) {
-        this.get('sendOnIdle').call(this, _event.target.value);
+        this.get('sendOnIdle').call(this, _event.target.value.trim());
       } else {
         debounce(this, '_search', query, get(this, 'debounceRate'), true);
       }
