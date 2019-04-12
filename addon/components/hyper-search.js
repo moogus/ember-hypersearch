@@ -42,6 +42,8 @@ export default Component.extend({
   resultKey: null,
   placeholder: null,
   ajax: inject(),
+  idleEnabled: false,
+  idleTime: 200,
 
   init() {
     this._super(...arguments);
@@ -122,6 +124,19 @@ export default Component.extend({
       .catch((error) => reject(error));
   },
 
+  sendOnIdle(val) {
+    this.set('latestVal', val);
+    Ember.run.later(() => {
+        if(val === this.get('latestVal')) {
+            console.log('Final Value send: ' + val);
+            this.get('_search').call(this, val);
+        }
+        else {
+            console.log('_Ignore ' + val);
+        }
+    }, 200);
+  },
+
   _search(value = this.$('input').val()) {
     return this.fetch(value)
       .then(bind(this, this._setResults));
@@ -143,7 +158,12 @@ export default Component.extend({
 
   actions: {
     search(_event, query) {
-      debounce(this, '_search', query, get(this, 'debounceRate'), true);
+      if(get(this, 'idleEnabled')) {
+        const val = _event.target.value;
+        this.get('sendOnIdle').call(this, val);
+      } else {
+        debounce(this, '_search', query, get(this, 'debounceRate'), true);
+      }
     },
 
     selectResult(result) {
