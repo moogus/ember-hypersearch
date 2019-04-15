@@ -12,9 +12,7 @@ module('Unit | Component | hyper search', function(hooks) {
   setupTest(hooks);
 
   test('#requestAndCache caches queries and their results', function (assert) {
-    const component = this.owner.factoryFor('component:hyper-search').create({
-      endpoint: '/'
-    });
+    const component = this.owner.factoryFor('component:hyper-search').create({ endpoint: '/' });
     // no need to actually do an ajax request
     component.request = sinon.spy(stubResolve);
 
