@@ -8,7 +8,7 @@ import sinon from 'sinon';
 let sandbox;
 const stubResolve = x => resolve(x);
 
-module('Unit | Component | hyper search', function (hooks) {
+module('Unit | Component | hyper search', function(hooks) {
   setupTest(hooks);
 
   test('#requestAndCache caches queries and their results', function (assert) {
