@@ -1,18 +1,20 @@
-import { resolve, Promise, all } from 'rsvp';
-import { get } from '@ember/object';
-import { run, later } from '@ember/runloop';
-import { module, test } from 'qunit';
-import { setupTest } from 'ember-qunit';
+import {resolve, Promise, all} from 'rsvp';
+import {get} from '@ember/object';
+import {run, later} from '@ember/runloop';
+import {module, test} from 'qunit';
+import {setupTest} from 'ember-qunit';
 import sinon from 'sinon';
 
 let sandbox;
 const stubResolve = x => resolve(x);
 
-module('Unit | Component | hyper search', function(hooks) {
+module('Unit | Component | hyper search', function (hooks) {
   setupTest(hooks);
 
-  test('#requestAndCache caches queries and their results', function(assert) {
-    const component = this.owner.factoryFor('component:hyper-search').create({ endpoint: '/' });
+  test('#requestAndCache caches queries and their results', function (assert) {
+    const component = this.owner.factoryFor('component:hyper-search').create({
+      endpoint: '/'
+    });
     // no need to actually do an ajax request
     component.request = sinon.spy(stubResolve);
 
@@ -139,4 +141,29 @@ module('Unit | Component | hyper search', function(hooks) {
         done();
       });
   });
+
+  test('#actions#search when sendOnIdle set to true', function (assert) {
+    const done = assert.async();
+    const component = this.owner.factoryFor('component:hyper-search').create({
+      endpoint: '/',
+      debounceRate: 5,
+      idleEnabled: true,
+      idleTime: 100
+    });
+    component.request = sinon.spy(stubResolve);
+
+    assert.notOk(get(component, '_cache.foo'), 'should not have cached foo yet');
+
+    component.get('actions.search').call(component, {
+      target: {
+        value: 'foo'
+      }
+    }).then((val) => {
+      assert.equal(get(component, '_cache.foo'), 'foo', 'should have cached value for foo now');
+      assert.ok(component.request.called, 'spy is called with expected param');
+      done();
+    });
+
+  });
+
 });

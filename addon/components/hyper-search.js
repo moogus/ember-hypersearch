@@ -87,7 +87,6 @@ export default Component.extend({
     }
     let cachedValue = this.getCacheForQuery(query);
     this._handleAction('loadingHandler', true);
-
     if (isPresent(cachedValue)) {
       this._handleAction('loadingHandler', false);
       return resolve(cachedValue);
@@ -124,11 +123,24 @@ export default Component.extend({
 
   sendOnIdle(val) {
     this.set('latestVal', val);
-    Ember.run.later(() => {
+    return new Promise((resolve) => {
+      console.log('Set Run later');
+      Ember.run.later((args) => {
         if(val === this.get('latestVal')) {
-            this.get('_search').call(this, val);
+            this.get('_search').call(this, val).then((resolve) => {
+              args[0]();
+            });
         }
-    }, this.get('idleTime'));
+    }, [resolve], this.get('idleTime'));
+    });
+  },
+
+  promiseTest() {
+    return new Promise((resolve) => {
+      Ember.run.later(() => {
+        resolve('DONE');
+    }, 200);
+    });
   },
 
   _search(value = this.$('input').val()) {
@@ -153,7 +165,8 @@ export default Component.extend({
   actions: {
     search(_event, query) {
       if(get(this, 'idleEnabled')) {
-        this.get('sendOnIdle').call(this, _event.target.value.trim());
+        console.log('XXXXXXXXX SEND ON IDLE XXXXXXXXXXXX ' + _event.target.value);
+        return this.get('sendOnIdle').call(this, _event.target.value.trim());
       } else {
         debounce(this, '_search', query, get(this, 'debounceRate'), true);
       }
