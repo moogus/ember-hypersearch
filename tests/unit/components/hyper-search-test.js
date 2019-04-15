@@ -1,8 +1,8 @@
-import {resolve, Promise, all} from 'rsvp';
-import {get} from '@ember/object';
-import {run, later} from '@ember/runloop';
-import {module, test} from 'qunit';
-import {setupTest} from 'ember-qunit';
+import { resolve, Promise, all } from 'rsvp';
+import { get } from '@ember/object';
+import { run, later } from '@ember/runloop';
+import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 import sinon from 'sinon';
 
 let sandbox;
