@@ -42,6 +42,8 @@ export default Component.extend({
   resultKey: null,
   placeholder: null,
   ajax: inject(),
+  idleEnabled: false,
+  idleTime: 300,
 
   init() {
     this._super(...arguments);
@@ -83,11 +85,8 @@ export default Component.extend({
     if (isBlank(query) || (query.length < get(this, 'minQueryLength'))) {
       return reject();
     }
-
     let cachedValue = this.getCacheForQuery(query);
-
     this._handleAction('loadingHandler', true);
-
     if (isPresent(cachedValue)) {
       this._handleAction('loadingHandler', false);
       return resolve(cachedValue);
@@ -122,6 +121,19 @@ export default Component.extend({
       .catch((error) => reject(error));
   },
 
+  sendOnIdle(val) {
+    this.set('latestVal', val);
+    return new Promise((resolve) => {
+      Ember.run.later((args) => {
+        if(val === this.get('latestVal')) {
+            this.get('_search').call(this, val).then((resolve) => {
+              args[0]();
+            });
+        }
+    }, [resolve], this.get('idleTime'));
+    });
+  },
+
   _search(value = this.$('input').val()) {
     return this.fetch(value)
       .then(bind(this, this._setResults));
@@ -129,7 +141,6 @@ export default Component.extend({
 
   _setResults(results) {
     this._handleAction('handleResults', results);
-
     return set(this, 'results', results);
   },
 
@@ -143,7 +154,11 @@ export default Component.extend({
 
   actions: {
     search(_event, query) {
-      debounce(this, '_search', query, get(this, 'debounceRate'), true);
+      if(get(this, 'idleEnabled')) {
+        return this.get('sendOnIdle').call(this, _event.target.value.trim());
+      } else {
+        debounce(this, '_search', query, get(this, 'debounceRate'), true);
+      }
     },
 
     selectResult(result) {
